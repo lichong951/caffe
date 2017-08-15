@@ -47,7 +47,7 @@ string bytes2string(JNIEnv *env, jbyteArray buf) {
 cv::Mat imgbuf2mat(JNIEnv *env, jbyteArray buf, int width, int height) {
   jbyte *ptr = env->GetByteArrayElements(buf, 0);
   cv::Mat img(height + height / 2, width, CV_8UC1, (unsigned char *)ptr);
-  cv::cvtColor(img, img, CV_YUV2RGBA_NV21);
+  cv::cvtColor(img, img, CV_YUV2BGR_NV21);
   env->ReleaseByteArrayElements(buf, ptr, 0);
   return img;
 }
