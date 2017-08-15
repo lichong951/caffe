@@ -34,24 +34,44 @@ template <typename T> vector<int> argmax(vector<T> const &values, int N) {
   return vector<int>(indices.begin(), indices.begin() + N);
 }
 
-CaffeMobile *CaffeMobile::caffe_mobile_ = 0;
+CaffeMobile *CaffeMobile::caffe_mobile_recog = 0;
+CaffeMobile *CaffeMobile::caffe_mobile_detect = 0;
 string CaffeMobile::model_path_ = "";
 string CaffeMobile::weights_path_ = "";
 
 CaffeMobile *CaffeMobile::Get() {
-  CHECK(caffe_mobile_);
-  return caffe_mobile_;
+  CHECK(caffe_mobile_recog);
+  return caffe_mobile_recog;
+}
+
+CaffeMobile *CaffeMobile::Get(int type) {
+
+  if (2==type)
+  {
+    CHECK(caffe_mobile_detect);
+    return caffe_mobile_detect;
+  }else
+  {
+    CHECK(caffe_mobile_recog);
+  return caffe_mobile_recog;
+  }
+
 }
 
 CaffeMobile *CaffeMobile::Get(const string &model_path,
-                              const string &weights_path) {
-  if (!caffe_mobile_ || model_path != model_path_ ||
-      weights_path != weights_path_) {
-    caffe_mobile_ = new CaffeMobile(model_path, weights_path);
-    model_path_ = model_path;
-    weights_path_ = weights_path;
+                              const string &weights_path,int type) {
+
+if (!caffe_mobile_detect&&type == 2)
+  {
+    caffe_mobile_detect=new CaffeMobile(model_path, weights_path);
+    return caffe_mobile_detect;
   }
-  return caffe_mobile_;
+  else if (!caffe_mobile_recog) {
+    caffe_mobile_recog = new CaffeMobile(model_path, weights_path);
+    return caffe_mobile_recog;
+  }
+
+
 }
 
 CaffeMobile::CaffeMobile(const string &model_path, const string &weights_path) {
@@ -253,21 +273,21 @@ CaffeMobile::ExtractFeatures(const cv::Mat &img,
 
 } // namespace caffe
 
-using caffe::CaffeMobile;
+// using caffe::CaffeMobile;
 
-int main(int argc, char const *argv[]) {
-  string usage("usage: main <model> <weights> <mean_file> <img>");
-  if (argc < 5) {
-    std::cerr << usage << std::endl;
-    return 1;
-  }
+// int main(int argc, char const *argv[]) {
+//   string usage("usage: main <model> <weights> <mean_file> <img>");
+//   if (argc < 5) {
+//     std::cerr << usage << std::endl;
+//     return 1;
+//   }
 
-  CaffeMobile *caffe_mobile =
-      CaffeMobile::Get(string(argv[1]), string(argv[2]));
-  caffe_mobile->SetMean(string(argv[3]));
-  vector<int> top_3 = caffe_mobile->PredictTopK(cv::imread(string(argv[4]), -1), 3);
-  for (auto i : top_3) {
-    std::cout << i << std::endl;
-  }
-  return 0;
-}
+//   CaffeMobile *caffe_mobile =
+//       CaffeMobile::Get(string(argv[1]), string(argv[2]),0);
+//   caffe_mobile->SetMean(string(argv[3]));
+//   vector<int> top_3 = caffe_mobile->PredictTopK(cv::imread(string(argv[4]), -1), 3);
+//   for (auto i : top_3) {
+//     std::cout << i << std::endl;
+//   }
+//   return 0;
+// }

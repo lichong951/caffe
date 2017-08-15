@@ -16,7 +16,8 @@ public:
   ~CaffeMobile();
 
   static CaffeMobile *Get();
-  static CaffeMobile *Get(const string &model_path, const string &weights_path);
+  static CaffeMobile *Get(int type);
+  static CaffeMobile *Get(const string &model_path, const string &weights_path,int type);
 
   void SetMean(const string &mean_file);
 
@@ -32,7 +33,8 @@ public:
                                         const string &str_blob_names);
 
 private:
-  static CaffeMobile *caffe_mobile_;
+  static CaffeMobile *caffe_mobile_recog;
+  static CaffeMobile *caffe_mobile_detect;
   static string model_path_;
   static string weights_path_;
 

@@ -69,23 +69,23 @@ JNIEXPORT void JNICALL Java_com_sh1r0_caffe_1android_1lib_CaffeMobile_enableLog(
     JNIEnv *env, jobject thiz, jboolean enabled) {}
 
 JNIEXPORT jint JNICALL Java_com_sh1r0_caffe_1android_1lib_CaffeMobile_loadModel(
-    JNIEnv *env, jobject thiz, jstring modelPath, jstring weightsPath) {
+    JNIEnv *env, jobject thiz, jstring modelPath, jstring weightsPath,int type) {
   CaffeMobile::Get(jstring2string(env, modelPath),
-                   jstring2string(env, weightsPath));
+                   jstring2string(env, weightsPath),type);
   return 0;
 }
 
 JNIEXPORT void JNICALL
 Java_com_sh1r0_caffe_1android_1lib_CaffeMobile_setMeanWithMeanFile(
-    JNIEnv *env, jobject thiz, jstring meanFile) {
-  CaffeMobile *caffe_mobile = CaffeMobile::Get();
+    JNIEnv *env, jobject thiz, jstring meanFile,int type) {
+  CaffeMobile *caffe_mobile = CaffeMobile::Get(type);
   caffe_mobile->SetMean(jstring2string(env, meanFile));
 }
 
 JNIEXPORT void JNICALL
 Java_com_sh1r0_caffe_1android_1lib_CaffeMobile_setMeanWithMeanValues(
-    JNIEnv *env, jobject thiz, jfloatArray meanValues) {
-  CaffeMobile *caffe_mobile = CaffeMobile::Get();
+    JNIEnv *env, jobject thiz, jfloatArray meanValues,int type) {
+  CaffeMobile *caffe_mobile = CaffeMobile::Get(type);
   int num_channels = env->GetArrayLength(meanValues);
   jfloat *ptr = env->GetFloatArrayElements(meanValues, 0);
   vector<float> mean_values(ptr, ptr + num_channels);
@@ -93,8 +93,8 @@ Java_com_sh1r0_caffe_1android_1lib_CaffeMobile_setMeanWithMeanValues(
 }
 
 JNIEXPORT void JNICALL Java_com_sh1r0_caffe_1android_1lib_CaffeMobile_setScale(
-    JNIEnv *env, jobject thiz, jfloat scale) {
-  CaffeMobile *caffe_mobile = CaffeMobile::Get();
+    JNIEnv *env, jobject thiz, jfloat scale,int type) {
+  CaffeMobile *caffe_mobile = CaffeMobile::Get(type);
   caffe_mobile->SetScale(scale);
 }
 
@@ -104,8 +104,8 @@ JNIEXPORT void JNICALL Java_com_sh1r0_caffe_1android_1lib_CaffeMobile_setScale(
  */
 JNIEXPORT jfloatArray JNICALL
 Java_com_sh1r0_caffe_1android_1lib_CaffeMobile_getConfidenceScore(
-    JNIEnv *env, jobject thiz, jbyteArray buf, jint width, jint height) {
-  CaffeMobile *caffe_mobile = CaffeMobile::Get();
+    JNIEnv *env, jobject thiz, jbyteArray buf, jint width, jint height,int type) {
+  CaffeMobile *caffe_mobile = CaffeMobile::Get(type);
   vector<float> conf_score =
       caffe_mobile->GetConfidenceScore(getImage(env, buf, width, height));
 
@@ -126,8 +126,8 @@ Java_com_sh1r0_caffe_1android_1lib_CaffeMobile_getConfidenceScore(
 JNIEXPORT jintArray JNICALL
 Java_com_sh1r0_caffe_1android_1lib_CaffeMobile_predictImage(
     JNIEnv *env, jobject thiz, jbyteArray buf, jint width, jint height,
-    jint k) {
-  CaffeMobile *caffe_mobile = CaffeMobile::Get();
+    jint k,int type) {
+  CaffeMobile *caffe_mobile = CaffeMobile::Get(type);
   vector<int> top_k =
       caffe_mobile->PredictTopK(getImage(env, buf, width, height), k);
 
@@ -148,8 +148,8 @@ Java_com_sh1r0_caffe_1android_1lib_CaffeMobile_predictImage(
 JNIEXPORT jobjectArray JNICALL
 Java_com_sh1r0_caffe_1android_1lib_CaffeMobile_extractFeatures(
     JNIEnv *env, jobject thiz, jbyteArray buf, jint width, jint height,
-    jstring blobNames) {
-  CaffeMobile *caffe_mobile = CaffeMobile::Get();
+    jstring blobNames,int type) {
+  CaffeMobile *caffe_mobile = CaffeMobile::Get(type);
   vector<vector<float>> features = caffe_mobile->ExtractFeatures(
       getImage(env, buf, width, height), jstring2string(env, blobNames));
 
