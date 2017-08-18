@@ -12,6 +12,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <android/log.h>
 
 using std::clock;
 using std::clock_t;
@@ -77,7 +78,8 @@ if (!caffe_mobile_detect&&type == 2)
 CaffeMobile::CaffeMobile(const string &model_path, const string &weights_path) {
   CHECK_GT(model_path.size(), 0) << "Need a model definition to score.";
   CHECK_GT(weights_path.size(), 0) << "Need model weights to score.";
-
+  __android_log_print(ANDROID_LOG_INFO,"JNI",model_path.c_str());
+  __android_log_print(ANDROID_LOG_INFO,"JNI",weights_path.c_str());
   Caffe::set_mode(Caffe::CPU);
 
   clock_t t_start = clock();
